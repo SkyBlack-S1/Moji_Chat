@@ -111,7 +111,7 @@ export const signIn = async (req, res) => {
 export const signOut = async (req, res) => {
   try {
     // Lấy refreshToken từ cookie
-    const token = req.cookie?.refreshToken; // phải có 'cookie-parser' nếu ko sẽ bị undefine
+    const token = req.cookies?.refreshToken; // phải có 'cookie-parser' nếu ko sẽ bị undefine
     if (token) {
       // Xóa refreshToken trong Session
       await Session.deleteOne({ refreshToken: token });
