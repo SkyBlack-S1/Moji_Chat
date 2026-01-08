@@ -3,16 +3,44 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { z } from "zod"; // Thư viện xác thực dữ liệu
+import { useForm } from "react-hook-form"; // Quản lý trạng thái và sự kiện của form
+import { zodResolver } from "@hookform/resolvers/zod"; // Kết nối zod với react-hook-form
+
+const signUpSchema = z.object({
+  firstname: z.string().min(1, "Tên bắt buộc phải có"),
+  lastname: z.string().min(1, "Họ bắt buộc phải có"),
+  username: z.string().min(3, "Tên đăng nhập phải có ít nhất 3 ký tự"),
+  email: z.email("Email không hợp lệ"),
+  password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+});
+
+type SignUpFormValues = z.infer<typeof signUpSchema>;
+// typeof lấy kiểu dữ liệu của signUpSchema
+// infer tự suy ra kiểu
+// -> Từ signUpSchema tự suy ra kiểu của SignUpFormValues
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const {
+    register, // theo dõi giá trị các ô input
+    handleSubmit, // chạy khi người dùng click đăng ký
+    formState: { errors, isSubmitting }, // chứa lỗi khi input không hợp lệ | xác định khi nào form trong quá trình gửi dữ liệu
+  } = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpSchema),
+  });
+
+  const onSubmit = async (data: SignUpFormValues) => {
+    // Gọi api backend để sign up
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0 border-border">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form className="p-6 md:p-8" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
               {/* Header - logo */}
               <div className="flex flex-col items-center text-center gap-2">
@@ -31,15 +59,27 @@ export function SignupForm({
                   <Label htmlFor="lastname" className="block text-sm">
                     Họ
                   </Label>
-                  <Input type="text" id="lastname" />
-                  {/* todo: error message */}
+                  <Input type="text" id="lastname" {...register("lastname")} />
+                  {errors.lastname && (
+                    <p className="text-destructive text-sm">
+                      {errors.lastname.message}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="firstname" className="block text-sm">
                     Tên
                   </Label>
-                  <Input type="text" id="firstname" />
-                  {/* todo: error message */}
+                  <Input
+                    type="text"
+                    id="firstname"
+                    {...register("firstname")} // Để react-hook-form biết đây là input nào để quản lý giá trị và xác thực
+                  />
+                  {errors.firstname && (
+                    <p className="text-destructive text-sm">
+                      {errors.firstname.message}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -48,8 +88,17 @@ export function SignupForm({
                 <Label htmlFor="username" className="block text-sm">
                   Tên đăng nhập
                 </Label>
-                <Input type="text" id="username" placeholder="moji" />
-                {/* todo: error message */}
+                <Input
+                  type="text"
+                  id="username"
+                  placeholder="moji"
+                  {...register("username")}
+                />
+                {errors.username && (
+                  <p className="text-destructive text-sm">
+                    {errors.username.message}
+                  </p>
+                )}
               </div>
 
               {/* email */}
@@ -57,8 +106,17 @@ export function SignupForm({
                 <Label htmlFor="email" className="block text-sm">
                   Email
                 </Label>
-                <Input type="email" id="email" placeholder="moji@gmail.com" />
-                {/* todo: error message */}
+                <Input
+                  type="email"
+                  id="email"
+                  placeholder="moji@gmail.com"
+                  {...register("email")}
+                />
+                {errors.email && (
+                  <p className="text-destructive text-sm">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               {/* password */}
@@ -66,12 +124,20 @@ export function SignupForm({
                 <Label htmlFor="password" className="block text-sm">
                   Mật khẩu
                 </Label>
-                <Input type="password" id="password" />
-                {/* todo: error message */}
+                <Input
+                  type="password"
+                  id="password"
+                  {...register("password")}
+                />
+                {errors.password && (
+                  <p className="text-destructive text-sm">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
               {/* nút signup */}
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
                 Tạo tài khoản
               </Button>
 
