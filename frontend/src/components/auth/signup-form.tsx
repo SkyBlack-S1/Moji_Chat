@@ -2,10 +2,10 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { z } from "zod"; // Thư viện xác thực dữ liệu
 import { useForm } from "react-hook-form"; // Quản lý trạng thái và sự kiện của form
 import { zodResolver } from "@hookform/resolvers/zod"; // Kết nối zod với react-hook-form
+import { Label } from "../ui/label";
 
 const signUpSchema = z.object({
   firstname: z.string().min(1, "Tên bắt buộc phải có"),
