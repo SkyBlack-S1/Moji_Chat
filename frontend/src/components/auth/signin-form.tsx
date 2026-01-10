@@ -14,7 +14,7 @@ const signInSchema = z.object({
 
 type SignInFormValues = z.infer<typeof signInSchema>;
 
-export function SignInForm({
+export function SigninForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -23,7 +23,7 @@ export function SignInForm({
     handleSubmit, // chạy khi người dùng click đăng ký
     formState: { errors, isSubmitting }, // chứa lỗi khi input không hợp lệ | xác định khi nào form trong quá trình gửi dữ liệu
   } = useForm<SignInFormValues>({
-    resolver: zodResolver(signUpSchema),
+    resolver: zodResolver(signInSchema),
   });
 
   const onSubmit = async (data: SignInFormValues) => {
